@@ -18,6 +18,7 @@ PubSubClient client(espClient);
 #define LED     13
 #define REL     12
 #define BTN     0
+int a = 0;
 
 long previousMillis = 0;
 
@@ -37,8 +38,6 @@ void setup_wifi() {
 }
 
 void reconnect() {
-  int a = 0;
-  wdt_reset();
   digitalWrite(LED, !digitalRead(LED));
   while (!client.connected()) {
     a++;
@@ -48,6 +47,7 @@ void reconnect() {
       client.publish("myhome/Cupboard/relay", "false");
       client.subscribe("myhome/Cupboard/#");
       digitalWrite(LED, HIGH);
+      a = 0;
     } else {
       delay(5000);
     }
@@ -79,20 +79,10 @@ void setup() {
   setup_wifi();
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
-  ArduinoOTA.onStart([]() {
-  });
-  ArduinoOTA.onEnd([]() {
-  });
-  ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
-  });
-  ArduinoOTA.onError([](ota_error_t error) {
-    /*Serial.printf("Error[%u]: ", error);
-    if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
-    else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
-    else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
-    else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
-    else if (error == OTA_END_ERROR) Serial.println("End Failed");*/
-  });
+  ArduinoOTA.onStart([]() {});
+  ArduinoOTA.onEnd([]() {});
+  ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {});
+  ArduinoOTA.onError([](ota_error_t error) {});
   ArduinoOTA.begin();
 }
 const char* IntToBool (int r) {
